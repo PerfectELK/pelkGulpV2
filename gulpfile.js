@@ -10,7 +10,7 @@ const uglify = require('gulp-uglify');
 const browser__sync = require('browser-sync');
 const sprite = require('gulp-svg-sprite');
 const webp = require('gulp-webp');
-const rigger = require('gulp-rigger');
+const file__include = require('gulp-file-include');
 
 const __cfg = {
     src: {
@@ -74,12 +74,13 @@ function webpGen(done){
 
 
 function html(done){
-    console.log(`${__cfg.src.site}`);
+
     gulp.src(`${__cfg.src.site}*.html`)
-        .pipe(rigger())
+        .pipe(file__include())
         .pipe(gulp.dest(`${__cfg.build.html}`));
     browser__sync.reload();
     done()
+
 }
 
 
