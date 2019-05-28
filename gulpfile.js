@@ -30,7 +30,7 @@ const __cfg = {
         img:`./projects/${argv.root}/build/img/`,
         temp:`./projects/${argv.root}/build/img/temp/`,
         svg:`./projects/${argv.root}/build/img/svg/`,
-        html:`./projects/${argv.root}/build/html/`,
+        html:`./projects/${argv.root}/build/`,
     }
 };
 
