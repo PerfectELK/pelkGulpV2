@@ -122,6 +122,19 @@ function preloader(done){
         .pipe(rename({suffix:'.min'}))
         .pipe(uglify())
         .pipe(gulp.dest(`${__cfg.build.js}`));
+
+    gulp.src(`${__cfg.src.src}preloaders/**/*.scss`)
+        .pipe(gulp__sass({
+            errorLogToConsole:true,
+            outputStyle:'compressed',
+        }))
+        .pipe(autoprefixer({
+            browsers: ['last 2 version'],
+            cascade: false,
+        }))
+        .pipe(concat('preloader.css'))
+        .pipe(rename({suffix:'.min'}))
+        .pipe(gulp.dest(`${__cfg.build.css}`));
     browser__sync.reload();
     done();
 
