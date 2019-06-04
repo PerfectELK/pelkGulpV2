@@ -115,14 +115,27 @@ function js(done){
 
 }
 
+function preloader(done){
+
+    gulp.src(`${__cfg.src.src}preloaders/**/*.js`)
+        .pipe(concat('preloader.js'))
+        .pipe(rename({suffix:'.min'}))
+        .pipe(uglify())
+        .pipe(gulp.dest(`${__cfg.build.js}`));
+    browser__sync.reload();
+    done();
+
+}
+
 function watching(done){
 
     gulp.watch(`${__cfg.src.root}**/*.scss`,css);
     gulp.watch(`${__cfg.src.site}**/*.js`,js);
     gulp.watch(`${__cfg.src.site}**/*.html`,html);
+    gulp.watch(`${__cfg.src.src}preloaders/**/*.js`,preloader);
 
     done()
 }
 
 
-gulp.task('default',gulp.series(webpGen,svgSprite,html,css,js,watching));
+gulp.task('default',gulp.series(webpGen,svgSprite,html,css,js,preloader,watching));
