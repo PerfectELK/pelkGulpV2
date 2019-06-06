@@ -10,6 +10,9 @@ const uglify = require('gulp-uglify');
 const browser__sync = require('browser-sync');
 const sprite = require('gulp-svg-sprite');
 const webp = require('gulp-webp');
+const cheerio = require('gulp-cheerio');
+const svgmin = require('gulp-svgmin');
+const replace = require('gulp-replace');
 const file__include = require('gulp-file-include');
 
 const __cfg = {
@@ -44,15 +47,33 @@ function svgSprite(done){
 
     let config = {
         mode: {
-            css: {
+            symbol: {
                 render: {
-                    css: false
+                    scss: {
+                        dest:'./../../scss/_sprite.scss',
+                        template: `${__cfg.src.scss}sprite_template.scss`
+                    }
                 }
             }
         }
     };
     gulp.src(`${__cfg.src.svg}**/*.svg`)
+        .pipe(svgmin({
+            js2svg: {
+                pretty: true
+            }
+        }))
+        .pipe(replace('&gt;', '>'))
         .pipe(sprite(config))
+        .pipe(cheerio({
+            run: function ($) {
+                $('[fill]').removeAttr('fill');
+                $('[style]').removeAttr('style');
+                $('[x]').removeAttr('x');
+                $('[y]').removeAttr('y');
+            },
+            parserOptions: { xmlMode: true }
+        }))
         .pipe(rename('sprite.svg'))
         .pipe(gulp.dest(`${__cfg.build.svg}`));
     browser__sync.reload();
