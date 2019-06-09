@@ -14,6 +14,7 @@ const cheerio = require('gulp-cheerio');
 const svgmin = require('gulp-svgmin');
 const replace = require('gulp-replace');
 const file__include = require('gulp-file-include');
+const babel = require('gulp-babel');
 
 const __cfg = {
     src: {
@@ -128,6 +129,9 @@ function js(done){
 
     gulp.src([`${__cfg.src.js}**/*.js`,`${__cfg.src.site}**/*.js`])
         .pipe(concat('bundle.js'))
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(rename({suffix:'.min'}))
         .pipe(uglify())
         .pipe(gulp.dest(`${__cfg.build.js}`));
