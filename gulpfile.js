@@ -15,6 +15,7 @@ const svgmin = require('gulp-svgmin');
 const replace = require('gulp-replace');
 const file__include = require('gulp-file-include');
 const babel = require('gulp-babel');
+const email__builder = require('gulp-email-builder');
 
 const __cfg = {
     src: {
@@ -26,6 +27,7 @@ const __cfg = {
         site:`./projects/${argv.root}/src/site/`,
         svg:`./projects/${argv.root}/src/img/svg/`,
         temp:`./projects/${argv.root}/src/img/temp/`,
+        email: `./projects/${argv.root}/src/email/`
     },
     build:{
         root:`./projects/${argv.root}/build/`,
@@ -35,6 +37,7 @@ const __cfg = {
         temp:`./projects/${argv.root}/build/img/temp/`,
         svg:`./projects/${argv.root}/build/img/svg/`,
         html:`./projects/${argv.root}/build/`,
+        email:`./projects/${argv.root}/build/email/`,
     }
 };
 
@@ -42,6 +45,15 @@ browser__sync.init({
     server:`${__cfg.build.html}`,
     port:(argv.port) ? argv.root : 3000,
 });
+
+
+function inlineEmails(done){
+    gulp.src(`${__cfg.src.email}**/*.html`)
+        .pipe(email__builder().build())
+        .pipe(gulp.dest(`${__cfg.build.email}`));
+    browser__sync.reload();
+    done();
+}
 
 
 function svgSprite(done){
@@ -129,11 +141,11 @@ function js(done){
 
     gulp.src([`${__cfg.src.js}**/*.js`,`${__cfg.src.site}**/*.js`])
         .pipe(concat('bundle.js'))
-        .pipe(babel({
-            presets: ['@babel/env']
-        }))
+        // .pipe(babel({
+        //     presets: ['@babel/env']
+        // }))
         .pipe(rename({suffix:'.min'}))
-        .pipe(uglify())
+        //.pipe(uglify())
         .pipe(gulp.dest(`${__cfg.build.js}`));
     browser__sync.reload();
     done();
@@ -171,9 +183,10 @@ function watching(done){
     gulp.watch(`${__cfg.src.site}**/*.js`,js);
     gulp.watch(`${__cfg.src.site}**/*.html`,html);
     gulp.watch(`${__cfg.src.src}preloaders/**/*.js`,preloader);
+    gulp.watch(`${__cfg.src.email}**/*.html`,inlineEmails);
 
     done()
 }
 
 
-gulp.task('default',gulp.series(webpGen,svgSprite,html,css,js,preloader,watching));
+gulp.task('default',gulp.series(webpGen,svgSprite,html,css,js,preloader,watching,inlineEmails));
