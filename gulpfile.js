@@ -6,14 +6,15 @@ const gulp__sass = require('gulp-sass');
 const rename = require('gulp-rename');
 const autoprefixer = require('gulp-autoprefixer');
 const concat = require('gulp-concat');
-const uglify = require('gulp-uglify');
+const uglify = require('gulp-uglify-es').default;
 const browser__sync = require('browser-sync');
 const sprite = require('gulp-svg-sprite');
 const webp = require('gulp-webp');
 const cheerio = require('gulp-cheerio');
 const svgmin = require('gulp-svgmin');
 const replace = require('gulp-replace');
-const file__include = require('gulp-file-include');
+//const file__include = require('gulp-file-include');
+const twig = require('gulp-twig');
 const babel = require('gulp-babel');
 const email__builder = require('gulp-email-builder');
 
@@ -27,7 +28,8 @@ const __cfg = {
         site:`./projects/${argv.root}/src/site/`,
         svg:`./projects/${argv.root}/src/img/svg/`,
         temp:`./projects/${argv.root}/src/img/temp/`,
-        email: `./projects/${argv.root}/src/email/`
+        email: `./projects/${argv.root}/src/email/`,
+        es:`./projects/${argv.root}/src/es6/`,
     },
     build:{
         root:`./projects/${argv.root}/build/`,
@@ -38,6 +40,7 @@ const __cfg = {
         svg:`./projects/${argv.root}/build/img/svg/`,
         html:`./projects/${argv.root}/build/`,
         email:`./projects/${argv.root}/build/email/`,
+        es:`./projects/${argv.root}/build/es6/`,
     }
 };
 
@@ -51,6 +54,16 @@ function inlineEmails(done){
     gulp.src(`${__cfg.src.email}**/*.html`)
         .pipe(email__builder().build())
         .pipe(gulp.dest(`${__cfg.build.email}`));
+    browser__sync.reload();
+    done();
+}
+
+function es(done){
+    gulp.src([`${__cfg.src.es}bundle.js`,`${__cfg.src.es}without_libs/*.js`])
+        .pipe(concat('bundle.js'))
+        .pipe(rename("bundle.min.js"))
+        .pipe(uglify())
+        .pipe(gulp.dest(`${__cfg.build.es}`));
     browser__sync.reload();
     done();
 }
@@ -109,8 +122,8 @@ function webpGen(done){
 
 function html(done){
 
-    gulp.src(`${__cfg.src.site}*.html`)
-        .pipe(file__include())
+    gulp.src(`${__cfg.src.site}*.twig`)
+        .pipe(twig())
         .pipe(gulp.dest(`${__cfg.build.html}`));
     browser__sync.reload();
     done()
@@ -189,4 +202,4 @@ function watching(done){
 }
 
 
-gulp.task('default',gulp.series(webpGen,svgSprite,html,css,js,preloader,watching,inlineEmails));
+gulp.task('default',gulp.series(webpGen,svgSprite,html,css,js,preloader,watching,inlineEmails,es));
