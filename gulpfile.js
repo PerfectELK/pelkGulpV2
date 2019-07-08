@@ -194,7 +194,7 @@ function watching(done){
 
     gulp.watch(`${__cfg.src.root}**/*.scss`,css);
     gulp.watch(`${__cfg.src.site}**/*.js`,js);
-    gulp.watch(`${__cfg.src.site}**/*.html`,html);
+    gulp.watch(`${__cfg.src.site}**/*.twig`,html);
     gulp.watch(`${__cfg.src.src}preloaders/**/*.js`,preloader);
     gulp.watch(`${__cfg.src.email}**/*.html`,inlineEmails);
 
