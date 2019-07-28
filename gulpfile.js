@@ -131,9 +131,16 @@ function html(done){
 }
 
 
+function site_css(done){
+    gulp.src(`${__cfg.src.src}site/**/*.scss`)
+        .pipe(concat('concat.scss'))
+        .pipe(gulp.dest(`${__cfg.src.src}scss/`));
+    done();
+}
+
 function css(done){
 
-    gulp.src(`${__cfg.src.root}**/*.scss`)
+    gulp.src(`${__cfg.src.src}scss/style.scss`)
         .pipe(gulp__sass({
         errorLogToConsole:true,
         outputStyle:'compressed',
@@ -142,7 +149,7 @@ function css(done){
             browsers: ['last 2 version'],
             cascade: false,
         }))
-        .pipe(concat('style.css'))
+        //.pipe(concat('style.css'))
         .pipe(rename({suffix:'.min'}))
         .pipe(gulp.dest(`${__cfg.build.css}`));
     browser__sync.reload();
@@ -192,7 +199,8 @@ function preloader(done){
 
 function watching(done){
 
-    gulp.watch(`${__cfg.src.root}**/*.scss`,css);
+    gulp.watch(`${__cfg.src.scss}**/*.scss`,css);
+    gulp.watch(`${__cfg.src.site}**/*.scss`,site_css);
     gulp.watch(`${__cfg.src.site}**/*.js`,js);
     gulp.watch(`${__cfg.src.site}**/*.twig`,html);
     gulp.watch(`${__cfg.src.src}preloaders/**/*.js`,preloader);
@@ -202,4 +210,4 @@ function watching(done){
 }
 
 
-gulp.task('default',gulp.series(webpGen,svgSprite,html,css,js,preloader,watching,inlineEmails,es));
+gulp.task('default',gulp.series(webpGen,/*vgSprite,*/html, site_css, css,js,preloader,watching,inlineEmails,es));
