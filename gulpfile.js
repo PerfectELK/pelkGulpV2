@@ -161,11 +161,11 @@ function js(done){
 
     gulp.src([`${__cfg.src.js}**/*.js`,`${__cfg.src.site}**/*.js`])
         .pipe(concat('bundle.js'))
-        // .pipe(babel({
-        //     presets: ['@babel/env']
-        // }))
+        .pipe(babel({
+            presets: ['@babel/env']
+        }))
         .pipe(rename({suffix:'.min'}))
-        //.pipe(uglify())
+        .pipe(uglify())
         .pipe(gulp.dest(`${__cfg.build.js}`));
     browser__sync.reload();
     done();
@@ -202,6 +202,7 @@ function watching(done){
     gulp.watch(`${__cfg.src.scss}**/*.scss`,css);
     gulp.watch(`${__cfg.src.site}**/*.scss`,site_css);
     gulp.watch(`${__cfg.src.site}**/*.js`,js);
+    gulp.watch(`${__cfg.src.js}**/*.js`,js);
     gulp.watch(`${__cfg.src.site}**/*.twig`,html);
     gulp.watch(`${__cfg.src.src}preloaders/**/*.js`,preloader);
     gulp.watch(`${__cfg.src.email}**/*.html`,inlineEmails);
